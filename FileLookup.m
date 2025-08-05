@@ -15,6 +15,7 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
     %                                               Files within a single folder (SingleFolder)
     %                                               All files within subfolders (AllSubFolders
     %                                               One constant folder (TroubleShoot)
+    %                                               One constant file (TroubleShoot)
     %
     % Input: 
     %   FileType        - The file extension for the type of desired files (.csv, .txt, .jpg, etc)
