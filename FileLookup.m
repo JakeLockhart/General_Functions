@@ -73,4 +73,5 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
         Lookup.FolderCount = length(unique({Lookup.FolderInfo.folder}));                                    % Determine the number of folders 
         [~, Lookup.CurrentFolder] = fileparts(Lookup.FolderAddress);                                        % Collect folder information
         Lookup.Path = arrayfun(@(x) fullfile(x.folder, x.name), Lookup.FolderInfo, 'UniformOutput', false); % Identify the file path
+        Lookup.Path = string(Lookup.Path);                                                                  % Convert file paths to strings
 end
