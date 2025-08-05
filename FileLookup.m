@@ -35,12 +35,15 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
     %% Select the folder
         switch SearchMode                                                               % SearchMode = Constant filepath for testing
             case 'TroubleShoot'                                                             % User input: Troubleshoot
-                if ~isfolder(ConstantAddress)                                                   % Validate that user defined path exists and is valid
-                    error("For 'TroubleShoot' mode, you must provide a" + ...                   % Throw error if invalid
-                          " valid folder path as the third argument.");      
+                if isfolder(ConstantAddress)                                                    % Constant address references folder
+                    Lookup.FolderAddress = ConstantAddress;                                         % Set folder address to user defined path
+                    searchPattern = fullfile(Lookup.FolderAddress, Lookup.FileType);                % Create a search pattern based on folder address                    
+                elseif isfile(ConstantAddress)                                                  % Constant address references file
+                    [Lookup.FolderAddress, FileName, FileExt] = fileparts(ConstantAddress);         % Identify file directory information
+                    searchPattern = fullfile(Lookup.FolderAddress, [FileName, FileExt]);            % Create a search pattern based on file address
+                else                                                                            % Constant address does not references a valid file/folder
+                    error("No valid file or folder address selected")                               % Throw error
                 end
-                    Lookup.FolderAddress = ConstantAddress;                                     % Set folder address to user defined path
-                    searchPattern = fullfile(Lookup.FolderAddress, Lookup.FileType);            % Create a search pattern based on folder address
             case 'SingleFile'                                                               % User input: SingleFile
                 [FileName, FolderPath] = uigetfile(Lookup.FileType, 'Select a file');           % Prompt user to select a single file
                 if isequal(FileName, 0)                                                         % Validate file selection 
