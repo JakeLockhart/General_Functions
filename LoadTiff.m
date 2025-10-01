@@ -23,10 +23,10 @@ function ImageStack = LoadTiff(Tiff_Directory)
     % <End Documentation>
     
     arguments
-        Tiff_Directory {mustBeTextScalar}
+        Tiff_Directory {mustBeTextScalar} = ""
     end
 
-    if nargin == 0
+    if Tiff_Directory == ""
         File = FileLookup("tif","SingleFile");
         Tiff = File.Path;
     else
