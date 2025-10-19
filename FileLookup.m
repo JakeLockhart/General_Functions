@@ -95,4 +95,4 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
         [~, Lookup.CurrentFolder] = fileparts(Lookup.FolderAddress);                                        % Collect folder information
         Lookup.Path = arrayfun(@(x) fullfile(x.folder, x.name), Lookup.FolderInfo, 'UniformOutput', false); % Identify the file path
         Lookup.Path = string(Lookup.Path);                                                                  % Convert file paths to strings
-end                % Lookup.AllFiles = strcat(Lookup.FolderAddress, Lookup.FileType);
+end
