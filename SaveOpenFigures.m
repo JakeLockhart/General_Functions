@@ -1,4 +1,4 @@
-function SaveOpenFigures(ext)
+function SaveOpenFigures(FileType)
     % <Documentation>
         % SaveAllFigures()
         %   
@@ -13,7 +13,9 @@ function SaveOpenFigures(ext)
         % Output:
         %   
     % <End Documentation>
-
+    arguments
+        FileType cell {mustBeMember(FileType, {'fig', 'jpg', 'tif', 'gif', 'png', 'eps', 'svg'})} = {'fig'}
+    end
 
     DestinationFolder = uigetdir(pwd, "Choose a folder to save all open figures...");
     if DestinationFolder == 0
@@ -22,15 +24,22 @@ function SaveOpenFigures(ext)
     end
     fprintf('Saving figures...\n')
 
-    jpgFolder = CreateDirectory('jpg', DestinationFolder);
-    figFolder = CreateDirectory('fig', DestinationFolder);
+    ChildFolders = cellfun(@(ext) CreateDirectory(ext, DestinationFolder), FileType, "UniformOutput", false);
 
     OpenFigures = findall(0, "Type", "figure");
     for FigIndex = 1:numel(OpenFigures)
         Fig = OpenFigures(FigIndex);
-        FigureTitle = GetFiguretitle(Fig);
-        savefig(Fig, fullfile(figFolder, FigureTitle + ".fig"));
-        exportgraphics(Fig, fullfile(jpgFolder, FigureTitle + ".jpg"));
+        FigureTitle = GetFigureTitle(Fig);
+        for Child = 1:numel(FileType)
+            ext = FileType{Child};
+            ChildFolder = ChildFolders{Child};
+            switch ext
+                case "fig"
+                    savefig(Fig, fullfile(ChildFolder, FigureTitle + "." + ext));
+                otherwise
+                    exportgraphics(Fig, fullfile(ChildFolder, FigureTitle + "." + ext));
+            end
+        end
     end
 
     fprintf('All figures saved as .fig and .jpg\n')
@@ -43,7 +52,7 @@ function SaveOpenFigures(ext)
         end
     end
 
-    function FigureTitle = GetFiguretitle(Fig)
+    function FigureTitle = GetFigureTitle(Fig)
         Tiles = findobj(Fig, "Type", "tiledlayout");
         if ~isempty(Tiles)
             TileAx = Tiles(1);
