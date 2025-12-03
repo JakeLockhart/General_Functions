@@ -1,4 +1,4 @@
-function SaveOpenFigures
+function SaveOpenFigures(ext)
     % <Documentation>
         % SaveAllFigures()
         %   
@@ -14,6 +14,7 @@ function SaveOpenFigures
         %   
     % <End Documentation>
 
+
     DestinationFolder = uigetdir(pwd, "Choose a folder to save all open figures...");
     if DestinationFolder == 0
         fprintf('\nNo destination folder selected\n')
@@ -21,15 +22,26 @@ function SaveOpenFigures
     end
     fprintf('Saving figures...\n')
 
+    jpgFolder = CreateDirectory('jpg', DestinationFolder);
+    figFolder = CreateDirectory('fig', DestinationFolder);
+
     OpenFigures = findall(0, "Type", "figure");
     for FigIndex = 1:numel(OpenFigures)
         Fig = OpenFigures(FigIndex);
         FigureTitle = GetFiguretitle(Fig);
-        savefig(Fig, fullfile(DestinationFolder, FigureTitle + ".fig"));
-        exportgraphics(Fig, fullfile(DestinationFolder, FigureTitle + ".jpg"));
+        savefig(Fig, fullfile(figFolder, FigureTitle + ".fig"));
+        exportgraphics(Fig, fullfile(jpgFolder, FigureTitle + ".jpg"));
     end
 
-    fprintf("All figures saved as .fig and .jpg\n")
+    fprintf('All figures saved as .fig and .jpg\n')
+
+    function extFolder = CreateDirectory(ext, ParentFolder)
+        Title = sprintf('MatLab Figures (.%s)', ext);
+        extFolder = fullfile(ParentFolder, Title);
+        if ~exist(extFolder, 'dir')
+            mkdir(extFolder)
+        end
+    end
 
     function FigureTitle = GetFiguretitle(Fig)
         Tiles = findobj(Fig, "Type", "tiledlayout");
