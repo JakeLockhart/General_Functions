@@ -24,24 +24,36 @@ function SaveOpenFigures
     OpenFigures = findall(0, "Type", "figure");
     for FigIndex = 1:numel(OpenFigures)
         Fig = OpenFigures(FigIndex);
+        FigureTitle = GetFiguretitle(Fig);
+        savefig(Fig, fullfile(DestinationFolder, FigureTitle + ".fig"));
+        exportgraphics(Fig, fullfile(DestinationFolder, FigureTitle + ".jpg"));
+    end
 
-        FigData = findobj(Fig, "Type", "axes");
-        if isempty(FigData)
-            FigTitle = sprintf('Figure%d', Fig.Number);
-        else
-            AxesTitle = string(FigData(1).Title.String);
-            switch AxesTitle
-                case ""
-                    FigTitle = sprintf('Figure%d', Fig.Number);
-                otherwise
-                    FigTitle = AxesTitle;
+    fprintf("All figures saved as .fig and .jpg\n")
+
+    function FigureTitle = GetFiguretitle(Fig)
+        Tiles = findobj(Fig, "Type", "tiledlayout");
+        if ~isempty(Tiles)
+            TileAx = Tiles(1);
+            if ~isempty(TileAx.Title) && ~isempty(TileAx.Title.String)
+                FigureTitle = CleanFileName(string(TileAx.Title.String));
+                return
             end
         end
 
-        savefig(Fig, fullfile(DestinationFolder, FigTitle + ".fig"));
-        exportgraphics(Fig, fullfile(DestinationFolder, FigTitle + ".jpg"));
+        Axes = findobj(Fig, "Type", "axes");
+        for ax = Axes'
+            if ~isempty(ax.Title) && ~isempty(ax.Title.String)
+                FigureTitle = CleanFileName(string(ax.Title.String));
+                return
+            end
+        end
+
+        FigureTitle = sprintf('Figure %d', Fig.Number);
     end
 
-    fprintf('All figures saved as .fig and .jpg\n')
+    function AppropriateFileName = CleanFileName(FigureName)
+        AppropriateFileName = regexprep(FigureName, '[<>:"/\\|?*]', '_');
+    end
 
 end
