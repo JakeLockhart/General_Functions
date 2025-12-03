@@ -12,6 +12,7 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
     %       folder.
     %   Any file type can be chosen; a preset list has been made which can be extended.
     %   Currently supports multiple search modes:   Singular file selection (SingleFile)
+    %                                               Multiple file selection (MultiFile)
     %                                               Files within a single folder (SingleFolder)
     %                                               All files within subfolders (AllSubFolders
     %                                               One constant folder (TroubleShoot)
@@ -27,7 +28,7 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
     %   Lookup.{FileType, FolderAddress, AllFiles, FolderInfo.{name, folder, date, bytes, isdir, datenum}, FileCount, FolderCount, CurrentFolder}
     arguments
         FileType char {mustBeMember(FileType, {'csv', 'xlsx', 'txt', 'tif', 'mdf'})};
-        SearchMode char {mustBeMember(SearchMode, {'SingleFile', 'SingleFolder', 'AllSubFolders', 'TroubleShoot'})} = 'SingleFolder';
+        SearchMode char {mustBeMember(SearchMode, {'SingleFile', 'MultiFile', 'SingleFolder', 'AllSubFolders', 'TroubleShoot'})} = 'SingleFolder';
         ConstantAddress char = ''
     end
     %% Define the file structure
@@ -51,7 +52,16 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
                     error("No file selected");                                                  % Throw error if invalid
                 end
                 Lookup.FolderAddress = FolderPath;                                              % Set folder address to user defined path
-                searchPattern = fullfile(Lookup.FolderAddress, FileName);                       % Create a search pattern based on folder address
+                searchPattern = fullfile(Lookup.FolderAddress, FileName);                       % Create a search pattern based on folder 
+            case 'MultiFile'
+                [FileName, FolderPath] = uigetfile(Lookup.FileType, 'Select files', ...     % Prompt user to select multiple files
+                                                   'MultiSelect', 'on');                        % Enable 'MultiSelect'
+                if isequal(FileName, 0)                                                         % Validate file selection 
+                    error("No file selected");                                                  % Throw error if invalid
+                end
+                FileName = string(FileName);                                                    % Convert FileName from cell array to string array for dir()
+                Lookup.FolderAddress = FolderPath;                                              % Set folder address to user defined path
+                searchPattern = fullfile(Lookup.FolderAddress, FileName);                       % Create a search pattern based on folder 
             case 'SingleFolder'                                                             % User input: SingleFolder
                 Lookup.FolderAddress = uigetdir('*.*', 'Select a folder');                      % Prompt user to select a folder
                 if isequal(Lookup.FolderAddress, 0)                                             % Validate folder selection
@@ -67,8 +77,19 @@ function Lookup = FileLookup(FileType, SearchMode, ConstantAddress)
         end
 
     %% Find All FileType within defined folder
-        Lookup.AllFiles = searchPattern;                                                                    % Create general file path
-        Lookup.FolderInfo = dir(searchPattern);                                                             % Identify the folder directory
+        switch SearchMode                                                                               % Create general file path
+            case 'MultiFile'                                                                                % 'MultiFile' creates a string array which needs a special case for dir()
+                FolderInfo = arrayfun(@(x) dir(x), searchPattern, 'UniformOutput', false);                  % dir() can only accept single inputs, use an array function to find directories
+                Lookup.FolderInfo = vertcat(FolderInfo{:});                                                 % Combine folder information
+
+                CommonFolder = Lookup.FolderInfo(1).folder;                                                 % Identify the common folder path
+                Ext = Lookup.FileType;                                                                      % Identify the extension
+                FileNames = erase(string({Lookup.FolderInfo.name}), extractAfter(Ext, '*'));                % Remove the extension from file names
+                Lookup.AllFiles = sprintf('%s%s:\t%s', CommonFolder, Ext, strjoin(FileNames, ', '));        % Create a common file path for every file
+            otherwise                                                                                       % Other search modes do not require special dir() inputs
+                Lookup.AllFiles = searchPattern;                                                            % General file path
+                Lookup.FolderInfo = dir(searchPattern);                                                     % Identify the folder directory 
+        end
         Lookup.FileCount = length(Lookup.FolderInfo);                                                       % Determine the number of files in this folder
         Lookup.FolderCount = length(unique({Lookup.FolderInfo.folder}));                                    % Determine the number of folders 
         [~, Lookup.CurrentFolder] = fileparts(Lookup.FolderAddress);                                        % Collect folder information
