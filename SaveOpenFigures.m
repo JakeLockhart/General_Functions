@@ -42,7 +42,8 @@ function SaveOpenFigures(FileType)
         end
     end
 
-    fprintf('All figures saved as .fig and .jpg\n')
+
+    fprintf('All figures saved as %s\n', strjoin(strcat('.', FileType), ', '))
 
     function extFolder = CreateDirectory(ext, ParentFolder)
         Title = sprintf('MatLab Figures (.%s)', ext);
