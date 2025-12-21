@@ -173,8 +173,8 @@ function [TotalFWHM, Edge1, Edge2, EdgeFWHM_Left, EdgeFWHM_Right] = CalculateFWH
     N = numel(ROIProfilePosition);
     MidIdx = floor(N/2);
 
-    [FWHM_Left, Edge1_Left, Edge2_Left] = CalculateFWHM(ROIProfilePosition(1:MidIdx), Intensity(1:MidIdx));
-    [FWHM_Right, Edge1_Right, Edge2_Right] = CalculateFWHM(ROIProfilePosition(MidIdx+1:end), Intensity(MidIdx+1:end));
+    [FWHM_Left, Edge1_Left, ~] = CalculateFWHM(ROIProfilePosition(1:MidIdx), Intensity(1:MidIdx));
+    [FWHM_Right, ~, Edge2_Right] = CalculateFWHM(ROIProfilePosition(MidIdx+1:end), Intensity(MidIdx+1:end));
 
     EdgeFWHM_Left = FWHM_Left;
     EdgeFWHM_Right = FWHM_Right;
