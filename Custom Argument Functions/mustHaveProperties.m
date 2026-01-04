@@ -33,7 +33,10 @@ function mustHaveProperties(Object, RequiredProperties)
 
     MissingProperties = setdiff(RequiredProperties, ObjectProperties);
     if ~isempty(MissingProperties)
-        error('Input structure must contain fields: %s', strjoin(MissingProperties, ", "))
-    end
+        ClassName = class(Object);
+        Identifier = ClassName + "MissingPropety";
 
+        ME = MException(Identifier, 'Missing object property: %s', strjoin(MissingProperties, ", "));
+        throwAsCaller(ME);
+    end
 end
