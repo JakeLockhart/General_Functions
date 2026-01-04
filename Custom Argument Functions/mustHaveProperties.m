@@ -34,7 +34,7 @@ function mustHaveProperties(Object, RequiredProperties)
     MissingProperties = setdiff(RequiredProperties, ObjectProperties);
     if ~isempty(MissingProperties)
         ClassName = class(Object);
-        Identifier = ClassName + "MissingPropety";
+        Identifier = ClassName + ":MissingProperty";
 
         ME = MException(Identifier, 'Missing object property: %s', strjoin(MissingProperties, ", "));
         throwAsCaller(ME);
