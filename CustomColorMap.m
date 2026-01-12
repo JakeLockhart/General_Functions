@@ -25,7 +25,7 @@ function ColorMap = CustomColorMap(n, Style, Resolution)
     % <End Documentation>
     arguments
         n (1,1) double {mustBeNumeric, mustBeInteger, mustBePositive}
-        Style (1,1) string {mustBeMember(Style, {"parula", "turbo", "hsv", "hot", "cool", "spring", "summer", "autumn", "winter", "gray", "bone", "copper", "pink", "sky", "abyss", "jet", "white"})} = "jet"
+        Style (1,:) char {mustBeMember(Style, {'parula', 'turbo', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink', 'sky', 'abyss', 'jet', 'white'})} = 'jet'
         Resolution (1,1) double {mustBeNumeric, mustBeInteger, mustBePositive} = 256;
     end
 
