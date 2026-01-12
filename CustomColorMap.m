@@ -25,12 +25,12 @@ function ColorMap = CustomColorMap(n, Style, Resolution)
     % <End Documentation>
     arguments
         n (1,1) double {mustBeNumeric, mustBeInteger, mustBePositive}
-        Style (1,:) char {mustBeMember(Style, {'parula', 'turbo', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink', 'sky', 'abyss', 'jet', 'white'})} = 'jet'
+        Style (1,:) char {mustBeMember(Style, {'parula', 'turbo', 'hsv', 'hot', 'cool', 'spring', 'summer', 'autumn', 'winter', 'gray', 'bone', 'copper', 'pink', 'sky', 'abyss', 'jet', 'lines', 'colorcube', 'prism', 'flag', 'white'})} = 'jet'
         Resolution (1,1) double {mustBeNumeric, mustBeInteger, mustBePositive} = 256;
     end
 
     DefaultColorMap = feval(Style, Resolution);
     ColorGradient = round(linspace(1,Resolution, n));
     ColorMap = DefaultColorMap(ColorGradient, :);
-
+    
 end
