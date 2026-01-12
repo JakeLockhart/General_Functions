@@ -1,4 +1,4 @@
-function SaveOpenFigures(FileType)
+function SaveOpenFigures(FileType, DestinationFolder)
     % <Documentation>
         % SaveAllFigures()
         %   
@@ -15,12 +15,15 @@ function SaveOpenFigures(FileType)
     % <End Documentation>
     arguments
         FileType cell {mustBeMember(FileType, {'fig', 'jpg', 'tif', 'gif', 'png', 'eps', 'svg'})} = {'fig'}
+        DestinationFolder (1,1) string {mustBeFolderOrEmpty} = ""
     end
 
-    DestinationFolder = uigetdir(pwd, "Choose a folder to save all open figures...");
-    if DestinationFolder == 0
-        fprintf('\nNo destination folder selected\n')
-        return
+    if DestinationFolder == ""
+        DestinationFolder = uigetdir(pwd, "Choose a folder to save all open figures...");
+        if DestinationFolder == 0
+            fprintf('\nNo destination folder selected\n')
+            return
+        end
     end
     fprintf('Saving figures...\n')
 
