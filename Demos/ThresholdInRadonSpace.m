@@ -1,6 +1,6 @@
-function TiRS_Demo(DemoShape)
+function ThresholdInRadonSpace(DemoShape)
     % <Documentation>
-        % TiRS_Demo()
+        % ThresholdInRadonSpace()
         %   
         %   Created by: jsl5865
         %   

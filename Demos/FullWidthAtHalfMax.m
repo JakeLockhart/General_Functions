@@ -1,6 +1,6 @@
-function FWHM_Demo(DemoType)
+function FullWidthAtHalfMax(DemoType)
     % <Documentation>
-        % FWHM_Demo()
+        % FullWidthAtHalfMax()
         %   
         %   Created by: jsl5865
         %   
