@@ -35,7 +35,6 @@ function ToggleLabels(scatterObject, x, y, labels)
 end
 
 function togglePoint(src, event)
-
     clickPoint = event.IntersectionPoint(1:2);
 
     X = src.UserData.X;
@@ -44,42 +43,36 @@ function togglePoint(src, event)
     C = src.CData;
     T = src.UserData.TextHandles;
 
-    % Use log distance if axes are log-scaled
-    ax = ancestor(src, 'axes');
-    if strcmp(ax.XScale, "log")
-        dx = log10(X) - log10(clickPoint(1));
+    ax = ancestor(src, "axes");
+    dx = scaledDifference(X, clickPoint, ax.XScale);
+    dy = scaledDifference(Y, clickPoint, ax.YScale);
+
+    [~, index] = min(dx.^2 + dy.^2);
+
+    if all(C(index,:) == [0 0 0])
+        C(index,:) = [1 0 0];
+        T(index) = text(X(index), Y(index), Labels(index), ...
+                        "FontSize", 8, ...
+                        "HorizontalAlignment", "center", ...
+                        "VerticalAlignment", "bottom", ...
+                        "PickableParts", "none");
     else
-        dx = X - clickPoint(1);
-    end
-
-    if strcmp(ax.YScale, "log")
-        dy = log10(Y) - log10(clickPoint(2));
-    else
-        dy = Y - clickPoint(2);
-    end
-
-    [~, idx] = min(dx.^2 + dy.^2);
-
-    if all(C(idx,:) == [0 0 0])
-        % Turn red + add label
-        C(idx,:) = [1 0 0];
-
-        T(idx) = text(X(idx), Y(idx), Labels(idx), ...
-            'FontSize', 8, ...
-            'HorizontalAlignment','left', ...
-            'VerticalAlignment','bottom', ...
-            'PickableParts','none');
-    else
-        % Turn black + remove label
-        C(idx,:) = [0 0 0];
-
-        if isvalid(T(idx))
-            delete(T(idx));
+        C(index,:) = [0 0 0];
+        if isvalid(T(index))
+            delete(T(index));
         end
-        T(idx) = gobjects(1);
+        T(index) = gobjects(1);
     end
 
     src.CData = C;
     src.UserData.TextHandles = T;
+
+    function distance = scaledDifference(truePosition, selectPosition, axisScale)
+        if strcmp(axisScale, "log")
+            distance = log10(truePosition) - log10(selectPosition);
+        else
+            distance = truePosition - selectPosition;
+        end
+    end
 
 end
