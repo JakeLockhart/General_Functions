@@ -44,8 +44,8 @@ function togglePoint(src, event)
     T = src.UserData.TextHandles;
 
     ax = ancestor(src, "axes");
-    dx = scaledDifference(X, clickPoint, ax.XScale);
-    dy = scaledDifference(Y, clickPoint, ax.YScale);
+    dx = scaledDifference(X, clickPoint(1), ax.XScale);
+    dy = scaledDifference(Y, clickPoint(2), ax.YScale);
 
     [~, index] = min(dx.^2 + dy.^2);
 
