@@ -14,7 +14,7 @@ function ToggleLabels(scatterObject, x, y, labels)
         %   
     % <End Documentation>
     arguments
-        scatterObject (1,1) matlab.graphics.chart.primitive.scatter
+        scatterObject (1,1) matlab.graphics.chart.primitive.Scatter
         x double {mustBeVector}
         y double {mustBeVector}
         labels string {mustBeVector}
