@@ -14,7 +14,7 @@ function SaveOpenFigures(FileType, DestinationFolder)
         %   
     % <End Documentation>
     arguments
-        FileType cell {mustBeMember(FileType, {'fig', 'jpg', 'tif', 'gif', 'png', 'eps', 'svg'})} = {'fig'}
+        FileType string {mustBeVector, mustBeMember(FileType, ["fig", "jpg", "tif", "gif", "png", "eps", "svg"])}
         DestinationFolder (1,1) string {mustBeFolderOrEmpty} = ""
     end
 
@@ -27,14 +27,14 @@ function SaveOpenFigures(FileType, DestinationFolder)
     end
     fprintf('Saving figures...\n')
 
-    ChildFolders = cellfun(@(ext) CreateDirectory(ext, DestinationFolder), FileType, "UniformOutput", false);
+    ChildFolders = arrayfun(@(ext) CreateDirectory(ext, DestinationFolder), FileType, "UniformOutput", false);
 
     OpenFigures = findall(0, "Type", "figure");
     for FigIndex = 1:numel(OpenFigures)
         Fig = OpenFigures(FigIndex);
         FigureTitle = GetFigureTitle(Fig);
         for Child = 1:numel(FileType)
-            ext = FileType{Child};
+            ext = FileType(Child);
             ChildFolder = ChildFolders{Child};
             switch ext
                 case "fig"
@@ -78,6 +78,9 @@ function SaveOpenFigures(FileType, DestinationFolder)
     end
 
     function AppropriateFileName = CleanFileName(FigureName)
+        if isstring(FigureName) || ischar(FigureName)
+            FigureName = strjoin(string(FigureName), '_');
+        end
         AppropriateFileName = regexprep(FigureName, '[<>:"/\\|?*]', '_');
     end
 
