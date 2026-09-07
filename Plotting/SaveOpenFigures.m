@@ -1,4 +1,4 @@
-function SaveopenFigures(fileType, destinationFolder)
+function SaveOpenFigures(fileType, destinationFolder)
     % <Documentation>
         % SaveAllFigures()
         %   
