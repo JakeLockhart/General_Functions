@@ -14,9 +14,12 @@ function SaveOpenFigures(fileType, destinationFolder)
         %   
     % <End Documentation>
     arguments
-        fileType string {mustBeVector, mustBeMember(fileType, ["fig", "jpg", "tif", "gif", "png", "eps", "svg"])}
+        fileType string {mustBeVector, mustBeMember(fileType, ["fig", "jpg", "png", "gif", "tif", "svg", "pdf", "eps", "emf"])}
         destinationFolder (1,1) string {mustBeFolderOrEmpty} = ""
     end
+
+    warningState = warning('off', 'MATLAB:print:ContentTypeImageSuggested');
+    cleanupObj = onCleanup(@() warning(warningState));
 
     if destinationFolder == ""
         destinationFolder = uigetdir(pwd, "Choose a folder to save all open figures...");
@@ -44,8 +47,10 @@ function SaveOpenFigures(fileType, destinationFolder)
             switch ext
                 case "fig"
                     savefig(Fig, fullfile(childFolder, figureTitle + "." + ext));
-                otherwise
+                case {"jpg", "png", "gif", "tif"}
                     exportgraphics(Fig, fullfile(childFolder, figureTitle + "." + ext));
+                case {"svg", "pdf", "eps", "emf"}
+                    exportgraphics(Fig, fullfile(childFolder, figureTitle + "." + ext), "ContentType", "vector");
             end
         end
     end
